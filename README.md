@@ -1,9 +1,7 @@
 # Need to Requirement python_version >= "3.12"
 
 # HIGH LEVEL ARCHITECTURE AI ASSISTANT
-![Online Image](https://drive.google.com/file/d/1840ibIIu7JzL6goKQt6MF9jQyEUHh-s1/view?usp=sharing)
-
-![Google Drive Image](https://drive.google.com/uc?export=view&id=1840ibIIu7JzL6goKQt6MF9jQyEUHh-s1)
+[Click here to view the file](https://drive.google.com/file/d/1840ibIIu7JzL6goKQt6MF9jQyEUHh-s1/view?usp=sharing)
 
 ## setup documentation
 
