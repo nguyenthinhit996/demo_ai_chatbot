@@ -14,6 +14,10 @@ class Settings(BaseSettings):
     tavily_api_key: str
     remaining_last_message: int = 6
     length_of_messages_to_summarize: int = 10
+    external_api_endpoint: str
+    postgres_db: str
+    postgres_user: str
+    postgres_password: str
     model_config = SettingsConfigDict(env_file=".env")
 
 settings = Settings()

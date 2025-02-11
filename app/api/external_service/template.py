@@ -2,7 +2,7 @@
 from app.api.external_service import graphql_request
 
 
-async def get_all_templates():
+async def get_all_templates(token: str, origin: str):
     query = """
          query NewRequestDialog_TemplateList($filterOptions: FormFilterOptions!) {
             getForms(paginationOptions: {limit: 1000}, filterOptions: $filterOptions) {
@@ -22,7 +22,7 @@ async def get_all_templates():
         }
     }
 
-    response = await graphql_request(query, variables)
+    response = await graphql_request(query, variables, token, origin)
     print(f"get_all_templates: {response}")
     get_forms = response.get("getForms")  # Access 'getForms' key
     if get_forms:
@@ -30,7 +30,7 @@ async def get_all_templates():
         return edges
     return None
 
-async def get_detail_template(idForm : str):
+async def get_detail_template(idForm : str, token: str, origin: str):
     query = """
         query NewRequest_GetForm($id: ID!) {
         getForm(id: $id) {
@@ -223,7 +223,7 @@ async def get_detail_template(idForm : str):
         "id": idForm
     }
 
-    response = await graphql_request(query, variables)
+    response = await graphql_request(query, variables, token, origin)
     print(f"get_detail_template: {response}")
     getForm = response.get("getForm")  # Access 'getForms' key
     if getForm:

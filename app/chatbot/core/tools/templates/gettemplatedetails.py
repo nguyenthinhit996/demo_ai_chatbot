@@ -8,6 +8,7 @@ from langchain_core.tools import BaseTool
 from pydantic import BaseModel, Field
 from app.core.app_helper import get_app
 from app.api.external_service.template import get_detail_template
+from langchain_core.runnables import RunnableConfig
 
 class GetTemplateDetailsToolInput(BaseModel):
     id: Optional[str] = Field(description="id of template", default=None)
@@ -24,7 +25,8 @@ class GetTemplateDetailsTool(BaseTool):
     async def _run(
         self,
         id: Optional[str] = None,
-        run_manager: Optional[CallbackManagerForToolRun] = None
+        run_manager: Optional[CallbackManagerForToolRun] = None,
+        config: RunnableConfig = None,
     ) -> List[Dict]:
         # app = get_app()
         # mock_templates = app.state.mock_template_details
@@ -41,7 +43,10 @@ class GetTemplateDetailsTool(BaseTool):
         if not id:
             raise ValueError("id of template cannot be empty, please provide id of template")
 
-        data = await get_detail_template(id)
+        configuration = config.get("configurable", {})
+        token = configuration.get("token", None)
+        origin = configuration.get("origin", None)
+        data = await get_detail_template(id, token, origin)
 
         print(f"Filtered templates: {data}")
         return data
@@ -49,10 +54,11 @@ class GetTemplateDetailsTool(BaseTool):
     async def _arun(
         self,
         id: Optional[str] = None,
-        run_manager: Optional[AsyncCallbackManagerForToolRun] = None
+        run_manager: Optional[AsyncCallbackManagerForToolRun] = None,
+        config: RunnableConfig = None,
     ) -> List[Dict]:
         """Use the tool asynchronously."""
-        data =  await self._run(id=id, run_manager=run_manager)
+        data =  await self._run(id=id, run_manager=run_manager, config=config)
         return data
 
 

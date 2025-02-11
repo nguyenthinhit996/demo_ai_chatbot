@@ -79,17 +79,7 @@ When cloning the repository on a new computer, follow these steps to set up the 
 ### **7. (Optional) Docker Setup**
 
 If you're using Docker:
-
-1. Ensure Docker is installed and running.
-2. Build the Docker image:
-   ```bash
-   docker build -t chatbot .
-   ```
-3. Run the Docker container:
-   ```bash
-   docker run -d -p 8000:8000 chatbot
-   ```
-
+docker compose --env-file .env up -d
 ---
 
 ### **8. Verify Functionality**

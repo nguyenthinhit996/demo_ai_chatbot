@@ -23,13 +23,31 @@ def format_chat_input(message: str, manager: str, managerId: str) -> Dict[str, A
         "manager": manager,
     }
 
-def format_config(thread_id: str, residentAppUserId: str, siteId: str) -> Dict[str, Any]:
+
+def format_chat_input_for_testing(message: str) -> Dict[str, Any]:
+    """Format the user message into the expected graph input structure"""
+    return {
+        "messages": [("user", message)],
+         "manager": "Nobody",
+    }
+
+def format_config_for_testing(thread_id: str) -> Dict[str, Any]:
+    """Format the configuration dictionary for graph processing"""
+    return {
+        "configurable": {
+            "thread_id": thread_id,
+        }
+    }
+
+def format_config(thread_id: str, residentAppUserId: str, siteId: str, token: str, origin: str) -> Dict[str, Any]:
     """Format the configuration dictionary for graph processing"""
     return {
         "configurable": {
             "thread_id": thread_id,
             "residentAppUserId": residentAppUserId,
-            "siteId": siteId
+            "siteId": siteId,
+            "token": token,
+            "origin": origin
         }
     }
 
@@ -123,7 +141,7 @@ async def process_chat(user_message: UserMessage) -> str:
         
         # Prepare input data and config
         input_data = format_chat_input(user_message.msg, user_message.manager, user_message.residentAppUserId)
-        thread_config = format_config(user_message.threadId, user_message.residentAppUserId, user_message.siteId)
+        thread_config = format_config(user_message.threadId, user_message.residentAppUserId, user_message.siteId, user_message.token, user_message.origin)
         
         logger.debug(f"Processing message with Thread ID: {user_message.threadId}")
         
@@ -159,3 +177,54 @@ async def process_chat(user_message: UserMessage) -> str:
         
     except Exception as e:
         return handle_error(e)
+    
+
+async def process_chat_for_testing(user_message: UserMessage) -> str:
+    """
+    Process a user message through the chatbot's graph and return the assistant's response.
+
+    Args:
+        user_message (UserMessage): The user's input message.
+    """
+    try:
+        # Initialize and validate graph
+        graph = await get_graph()
+        
+        # Prepare input data and config
+        input_data = format_chat_input_for_testing(user_message.msg)
+        thread_config = format_config_for_testing(user_message.threadId)
+        
+        logger.debug(f"Processing message with Thread ID: {user_message.threadId}")
+        
+        # Process message through graph
+        if(user_message.status == "approval"):
+            msg = user_message.msgFeedback
+            result = await graph.ainvoke(Command(resume={"action": "approval", "data": msg}), config=thread_config)
+            logger.debug(f"Raw graph response: {result}")
+        elif (user_message.status == "reject"):
+            result = await graph.ainvoke(Command(resume={"action": "reject", "data": "None"}), config=thread_config)
+            logger.debug(f"Raw graph response: {result}")    
+        elif (user_message.status == "feedback"):
+            msg = user_message.msgFeedback
+            result = await graph.ainvoke(Command(resume={"action": "feedback", "data": msg}), config=thread_config)
+            logger.debug(f"Raw graph response: {result}")
+        else:
+            logger.debug(f"Callingggggggggg ")
+            result = await graph.ainvoke(input_data, config=thread_config)
+            logger.debug(f"Raw graph response: {result}")
+
+        # result = await graph.ainvoke(input_data, config)
+        # logger.debug(f"Raw graph response: {result}")
+        
+        # Check for next steps
+        logger.info(f"Checking for next steps... {result}")
+        next_step = await check_next_steps(graph, config=thread_config)
+        if next_step:
+            return next_step
+        
+        # Extract and return response
+        logger.info(f"Returning chatbot response: {result}")
+        return extract_response_content(result)
+        
+    except Exception as e:
+        return handle_error(e)    

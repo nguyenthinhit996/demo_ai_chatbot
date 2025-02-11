@@ -1,6 +1,6 @@
 from app.api.external_service import graphql_request
 
-async def create_request(itemsValue, residentAppUserId, formVersionId, siteId):
+async def create_request(itemsValue, residentAppUserId, formVersionId, siteId, token, origin):
     query = """
         mutation CreateSubmissionNew($input: SubmissionInput!) {
             createSubmission(input: $input) {
@@ -25,7 +25,7 @@ async def create_request(itemsValue, residentAppUserId, formVersionId, siteId):
 
     try:
         # Send the GraphQL request
-        response = await graphql_request(query, variables)
+        response = await graphql_request(query, variables, token, origin)
         
         # Log the full response for debugging
         print(f"create_request: {response}")

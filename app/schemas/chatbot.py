@@ -19,6 +19,8 @@ class UserMessage(BaseModel):
     msgFeedback: Optional[str] = Field(default=None, example="Hello AI!", title="User Message", description="The content of the user's feedback tool.")
     residentAppUserId: Optional[str] = Field(default=None, example="residentAppUserId", title="residentAppUserId", description="residentAppUserId.")
     siteId: Optional[str] = Field(default=None, example="siteId", title="Site ID", description="Site ID of the resident.")
+    token: Optional[str] = Field(default=None, example="token", title="Token", description="Token of the user.")
+    origin: Optional[str] = Field(default=None, example="email", title="Origin", description="Origin of the message.")
 
 class EmailMessage(BaseModel):
     """
@@ -40,7 +42,8 @@ class ContenxtEmail(BaseModel):
     msgFeedback: Optional[str] = Field(default=None, example="Hello AI!", title="User Message", description="The content of the user's feedback tool.")
     residentAppUserId: Optional[str] = Field(default=None, example="residentAppUserId", title="residentAppUserId ID", description="residentAppUserId ID.")
     siteId: Optional[str] = Field(default=None, example="siteId", title="Site ID", description="Site ID of the resident.")
-
+    token: Optional[str] = Field(default=None, example="token", title="Token", description="Token of the user.")
+    origin: Optional[str] = Field(default=None, example="email", title="Origin", description="Origin of the message.")
 
 class ContenxtEmailUserReply(BaseModel):
     """
@@ -51,3 +54,10 @@ class ContenxtEmailUserReply(BaseModel):
     msgFeedback: Optional[str] = Field(default=None, example="Hello AI!", title="User Message", description="The content of the user's feedback tool.")
     residentAppUserId: Optional[str] = Field(default=None, example="residentAppUserId", title="residentAppUserId ID", description="residentAppUserId ID.")
     siteId: Optional[str] = Field(default=None, example="siteId", title="Site ID", description="Site ID of the resident.")
+    token: Optional[str] = Field(default=None, example="token", title="Token", description="Token of the user.")
+    origin: Optional[str] = Field(default=None, example="email", title="Origin", description="Origin of the message.")
+
+
+class TestChat(BaseModel):
+    threadId: Optional[str] = Field(..., min_length=1, example="2323", title="Thread ID", description="Unique identifier for the conversation thread.")
+    msg: Optional[str] = Field(default=None, example="hello ai", title="message from user", description="message from user")

@@ -1,7 +1,17 @@
 import logging
 import httpx
 
-async def graphql_request(query: str, variables: dict = None) -> dict:
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+EXTERNAL_API_ENDPOINT = os.getenv("EXTERNAL_API_ENDPOINT")
+
+print(f"API EXTERNAL_API_ENDPOINT: {EXTERNAL_API_ENDPOINT}")
+
+async def graphql_request(query: str, variables: dict = None, token: str = None, origin: str = None) -> dict:
     """
     Makes a GraphQL API request.
 
@@ -11,11 +21,11 @@ async def graphql_request(query: str, variables: dict = None) -> dict:
     :param headers: A dictionary of headers for the request, defaults to None.
     :return: A dictionary containing the response JSON.
     """
-    endpoint = "http://localhost:4000/admin"
+    endpoint = EXTERNAL_API_ENDPOINT
     headers = {
-        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjYzMDZiOThhMCJ9.eyJhdWQiOiJjYjc3YjNhYS05YjM4LTRmYzYtODYyNi03NTZkMjJjMTVmNmMiLCJleHAiOjE3MzkzMzM3OTksImlhdCI6MTczODcyODk5OSwiaXNzIjoiYWNtZS5jb20iLCJzdWIiOiIzNzgwYzBlOS0zYzdkLTQxNjMtYWRjYi1jMGI5NzY0NGM3NmYiLCJqdGkiOiI5ZWRkMzE4Ny1lMTM4LTQ4ODEtOTliYy02Zjg3NWRlYmZkYzAiLCJhdXRoZW50aWNhdGlvblR5cGUiOiJQQVNTV09SRCIsImFwcGxpY2F0aW9uSWQiOiJjYjc3YjNhYS05YjM4LTRmYzYtODYyNi03NTZkMjJjMTVmNmMiLCJyb2xlcyI6W10sImF1dGhfdGltZSI6MTczODcyODk5OSwidGlkIjoiNDA3YjNkYmQtZDVlNS00ZDZlLTkzNGQtYzEwMzdlMTMxOTQ2In0.xwATa6XOifC_9lULakeXxJ6gQWxwANXaB3p0QmCRPa8",
+        "token": token,
         "Content-Type": "application/json",
-        "origin" : "localhost"
+        "origin" : origin
     }
     logging.debug(f"headers status code: {headers}")
     payload = {

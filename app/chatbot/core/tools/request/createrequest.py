@@ -44,6 +44,8 @@ class CreateRequestTool(BaseTool):
             configuration = config.get("configurable", {})
             residentAppUserId = configuration.get("residentAppUserId", None)
             siteId = configuration.get("siteId", None)
+            token = configuration.get("token", None)
+            origin = configuration.get("origin", None)
             print(f"CreateRequestTool siteId: {siteId}")
 
             logging.info(f"Create Request with id: {itemsValue}")
@@ -54,7 +56,7 @@ class CreateRequestTool(BaseTool):
             # json_data = json.dumps([item.model_dump() for item in itemsValue], indent=2)
             # print(f"Create Request with json_data: {json_data}")
 
-            submissionId = await create_request(formVersionId=formVersionId, itemsValue=itemsValue, residentAppUserId=residentAppUserId, siteId=siteId)
+            submissionId = await create_request(formVersionId=formVersionId, itemsValue=itemsValue, residentAppUserId=residentAppUserId, siteId=siteId, token=token, origin=origin)
 
             return f"Create Request with id: {submissionId} Successfully"
 

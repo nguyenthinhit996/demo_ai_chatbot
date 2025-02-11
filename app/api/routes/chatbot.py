@@ -1,12 +1,12 @@
 from fastapi import APIRouter, HTTPException
-from app.chatbot.logic import process_chat
+from app.chatbot.logic import process_chat, process_chat_for_testing
 # from app.chatbot.logic_reply_mail import process_chat
 from app.schemas.chatbot import UserMessage
 from fastapi import FastAPI, Request
 from IPython.display import Image, display
 from app.core.app_helper import get_app
 import logging
-from app.schemas.chatbot import ContenxtEmail, ContenxtEmailUserReply
+from app.schemas.chatbot import ContenxtEmail, ContenxtEmailUserReply, TestChat
 from langchain_core.messages import HumanMessage, RemoveMessage, AIMessage, ToolMessage
 from fastapi.responses import FileResponse
 
@@ -50,7 +50,7 @@ async def chat(context: ContenxtEmail):
         human_message =f"Given a list of messages email, suggest professional responses to unresolved issues or recurring topics. \n Subject's email: {context.subject}\n\nMessages:\n{messages_str} \n"
 
         user = UserMessage(msg=human_message, threadId=context.threadId, manager=context.manager, status=context.status, msgFeedback=context.msgFeedback
-                           , residentAppUserId=context.residentAppUserId, siteId=context.siteId)
+                           , residentAppUserId=context.residentAppUserId, siteId=context.siteId, token=context.token, origin=context.origin)
         response = await process_chat(user)
         manager = context.manager
         logger.info(f"Response: {response}")
@@ -66,7 +66,7 @@ async def chat(context: ContenxtEmailUserReply):
     try:
         logging.log(logging.INFO, f"Context: {context}")
         user = UserMessage(msg="Empty", threadId=context.threadId, status=context.status, msgFeedback=context.msgFeedback
-                           , residentAppUserId=context.residentAppUserId, siteId=context.siteId)
+                           , residentAppUserId=context.residentAppUserId, siteId=context.siteId, token=context.token, origin=context.origin)
         response = await process_chat(user)
         logger.info(f"user-reply Response: {response}")
         # check 'question ' in response or not
@@ -89,6 +89,29 @@ async def chat(context: ContenxtEmailUserReply):
             }
             logger.info(f"Response bot_response: {data}")
             return {"manager": "manager", "bot_response": data}
+    except Exception as e:
+        print("Error processing", {e})
+        logger.error(f"Error processing: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/test")
+async def testchat():
+    try:
+        logging.log(logging.INFO, f"Context: test chat is running")
+        return {"reply": "server run ok"}
+    except Exception as e:
+        print("Error processing", {e})
+        logger.error(f"Error processing: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+    
+@router.post("/chat")
+async def testchatbotbyrest(testChat: TestChat):
+    try:
+
+        user = UserMessage(msg=testChat.msg, threadId=testChat.threadId)
+        response = await process_chat_for_testing(user)
+        logger.info(f"Response: {response}")
+        return {"user": testChat.msg, "bot_response": response}
     except Exception as e:
         print("Error processing", {e})
         logger.error(f"Error processing: {e}")
