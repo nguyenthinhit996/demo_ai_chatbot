@@ -39,7 +39,7 @@ def parse_email_messages_to_str(messages: list) -> str:
 
     return "\n".join(formatted_messages)
 
-@router.post("/auto-replay")
+@router.post("/auto-reply")
 async def chat(context: ContenxtEmail):
     try:
 
