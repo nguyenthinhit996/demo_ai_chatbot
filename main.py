@@ -23,6 +23,6 @@ app = create_app()
 app.include_router(auth.router, prefix="/auth", tags=["Authentication"])
 app.include_router(chatbot.router, prefix="/chatbot", tags=["Chatbot"])
 app.include_router(crud.router, prefix="/crud", tags=["CRUD"])
-app.include_router(vector_search.router, prefix="/vector", tags=["Vector Search"])
+# app.include_router(vector_search.router, prefix="/vector", tags=["Vector Search"])
 
 set_app(app)

@@ -167,8 +167,8 @@ class ChatBotGraph:
 
         graph.add_node("fetch_user_info", user_info)
         graph.add_edge(START, "fetch_user_info")
-        graph.add_conditional_edges("fetch_user_info", route_to_workflow)
 
+        graph.add_conditional_edges("fetch_user_info", route_to_workflow)
         # Primary assistant
         graph.add_node("primary_assistant", Assistant(assistant_runnable))
 

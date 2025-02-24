@@ -1,17 +1,14 @@
-
 from app.api.external_service import graphql_request
-
-
+ 
+ 
 async def get_all_templates(token: str, origin: str):
     query = """
          query NewRequestDialog_TemplateList($filterOptions: FormFilterOptions!) {
-            getForms(paginationOptions: {limit: 1000}, filterOptions: $filterOptions) {
-                edges {
-                    node {
-                        id
-                        title
-                        description
-                    }
+            getForms(paginationOptions: {limit: 1000, pageNum: 0}, filterOptions: $filterOptions) {
+                records {
+                    id
+                    title
+                    description
                 }
             }
         }
@@ -21,15 +18,15 @@ async def get_all_templates(token: str, origin: str):
             "status": "ACTIVE"
         }
     }
-
+ 
     response = await graphql_request(query, variables, token, origin)
     print(f"get_all_templates: {response}")
     get_forms = response.get("getForms")  # Access 'getForms' key
     if get_forms:
-        edges = get_forms.get("edges")  # Access 'edges' inside 'getForms'
-        return edges
+        records = get_forms.get("records")  # Access 'edges' inside 'getForms'
+        return records
     return None
-
+ 
 async def get_detail_template(idForm : str, token: str, origin: str):
     query = """
         query NewRequest_GetForm($id: ID!) {
@@ -38,10 +35,10 @@ async def get_detail_template(idForm : str, token: str, origin: str):
             currentFormVersion {
             id
             ...FormItems
-            } 
+            }
         }
         }
-
+ 
         fragment FormShortTextItem on ShortText {
         id
         index
@@ -52,11 +49,11 @@ async def get_detail_template(idForm : str, token: str, origin: str):
         showAsSummary
         validators {
             isRequired
-            
+           
         }
-        
+       
         }
-
+ 
         fragment FormLongTextItem on LongText {
         id
         index
@@ -66,11 +63,11 @@ async def get_detail_template(idForm : str, token: str, origin: str):
         isHidedFromSiteRequest
         validators {
             isRequired
-            
+           
         }
-        
+       
         }
-
+ 
         fragment FormNumberItem on Number {
         id
         index
@@ -82,20 +79,20 @@ async def get_detail_template(idForm : str, token: str, origin: str):
             minNumber
             maxNumber
             isRequired
-            
+           
         }
-        
+       
         }
-
+ 
         fragment FormSectionHeadingItem on SectionHeading {
         id
         index
         type
         title
         description
-        
+       
         }
-
+ 
         fragment FormImageUploadItem on ImageUpload {
         id
         index
@@ -105,11 +102,11 @@ async def get_detail_template(idForm : str, token: str, origin: str):
         isHidedFromSiteRequest
         validators {
             isRequired
-            
+           
         }
-        
+       
         }
-
+ 
         fragment FormFileUploadItem on FileUpload {
         id
         index
@@ -119,11 +116,11 @@ async def get_detail_template(idForm : str, token: str, origin: str):
         isHidedFromSiteRequest
         validators {
             isRequired
-            
+           
         }
-        
+       
         }
-
+ 
         fragment FormSingleSelectItem on SingleSelect {
         id
         index
@@ -135,15 +132,15 @@ async def get_detail_template(idForm : str, token: str, origin: str):
             title
             index
             id
-            
+           
         }
         validators {
             isRequired
-            
+           
         }
-        
+       
         }
-
+ 
         fragment FormMultiSelectItem on MultiSelect {
         id
         index
@@ -155,15 +152,15 @@ async def get_detail_template(idForm : str, token: str, origin: str):
             title
             index
             id
-            
+           
         }
         validators {
             isRequired
-            
+           
         }
-        
+       
         }
-
+ 
         fragment FormCheckboxItem on CheckBox {
         id
         index
@@ -173,11 +170,11 @@ async def get_detail_template(idForm : str, token: str, origin: str):
         isHidedFromSiteRequest
         validators {
             isRequiredTrue
-            
+           
         }
-        
+       
         }
-
+ 
         fragment FormDateItem on DateItem {
         id
         index
@@ -187,20 +184,20 @@ async def get_detail_template(idForm : str, token: str, origin: str):
         isHidedFromSiteRequest
         validators {
             isRequired
-            
+           
         }
-        
+       
         }
-
+ 
         fragment FormSummaryItem on Summary {
         id
         index
         type
         title
         isVisibleFromSite
-        
+       
         }
-
+ 
         fragment FormItems on FormVersion {
         items {
             ...FormShortTextItem
@@ -214,15 +211,15 @@ async def get_detail_template(idForm : str, token: str, origin: str):
             ...FormCheckboxItem
             ...FormDateItem
             ...FormSummaryItem
-            
+           
         }
-        
+       
         }
     """
     variables = {
         "id": idForm
     }
-
+ 
     response = await graphql_request(query, variables, token, origin)
     print(f"get_detail_template: {response}")
     getForm = response.get("getForm")  # Access 'getForms' key
