@@ -62,30 +62,12 @@ When cloning the repository on a new computer, follow these steps to set up the 
   ```bash
   uvicorn main:app --reload
   ```
-- Open `http://127.0.0.1:8000/docs` in your browser to view the FastAPI Swagger documentation.
+- Open `http://127.0.0.1:8000` in your browser to view the FastAPI Swagger documentation.
 
 ---
 
-### **6. Set Up Git for Version Control**
-
-- If this is a new environment, configure your Git username and email:
-  ```bash
-  git config --global user.name "Your Name"
-  git config --global user.email "your_email@example.com"
-  ```
-
----
-
-### **7. (Optional) Docker Setup**
+### **6. Docker Setup**
 
 If you're using Docker:
 docker compose --env-file .env up -d
 ---
-
-### **8. Verify Functionality**
-
-- Test API endpoints using cURL, Postman, or the FastAPI Swagger UI at `/docs`.
-
----
-
-This process ensures the chatbot application is properly set up and ready to run on a new computer.

@@ -1,4 +1,4 @@
-from typing import Optional, Type, Union, List, Dict
+from typing import Optional, Type, List, Dict
 from datetime import date, datetime
 from langchain_core.callbacks import (
     AsyncCallbackManagerForToolRun,
@@ -7,7 +7,6 @@ from langchain_core.callbacks import (
 from langchain_core.tools import BaseTool
 from pydantic import BaseModel, Field
 from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
 from langchain.schema import SystemMessage, HumanMessage
 
 class EmailMessage(BaseModel):

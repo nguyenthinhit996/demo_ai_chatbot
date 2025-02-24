@@ -1,15 +1,8 @@
 from fastapi import APIRouter, HTTPException
 from app.chatbot.logic import process_chat, process_chat_for_testing
-# from app.chatbot.logic_reply_mail import process_chat
 from app.schemas.chatbot import UserMessage
-from fastapi import FastAPI, Request
-from IPython.display import Image, display
-from app.core.app_helper import get_app
 import logging
 from app.schemas.chatbot import ContenxtEmail, ContenxtEmailUserReply, TestChat
-from langchain_core.messages import HumanMessage, RemoveMessage, AIMessage, ToolMessage
-from fastapi.responses import FileResponse
-
 
 logger = logging.getLogger(__name__)
 
@@ -107,7 +100,6 @@ async def testchat():
 @router.post("/chat")
 async def testchatbotbyrest(testChat: TestChat):
     try:
-
         user = UserMessage(msg=testChat.msg, threadId=testChat.threadId)
         response = await process_chat_for_testing(user)
         logger.info(f"Response: {response}")
@@ -116,31 +108,3 @@ async def testchatbotbyrest(testChat: TestChat):
         print("Error processing", {e})
         logger.error(f"Error processing: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-
-@router.post("/generateimage")
-async def download_image():
-    try:
-        # Retrieve the application and graph state
-        app = get_app()
-        graph = getattr(app.state, "graph", None)
-        
-        if not graph:
-            raise HTTPException(status_code=500, detail="Graph state is not available")
-
-        # Generate the image data
-        img_data = graph.get_graph().draw_mermaid_png()
-        
-        # Save the image to a temporary file
-        temp_file_path = "/tmp/generated_image.png"
-        with open(temp_file_path, "wb") as f:
-            f.write(img_data)
-        
-        # Return the file as a downloadable response
-        return FileResponse(
-            temp_file_path,
-            media_type="image/png",
-            filename="generated_image.png"
-        )
-    except Exception as e:
-        logger.error(f"Error generating image: {e}")
-        raise HTTPException(status_code=500, detail="Failed to generate image")

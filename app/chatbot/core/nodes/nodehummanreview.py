@@ -1,17 +1,12 @@
 from typing import Literal
 from app.chatbot.core.state import ChatBotState
-from langgraph.utils.config import get_configurable
 from langgraph.types import Command, interrupt
 from langchain_core.runnables.config import RunnableConfig
-
-
 import logging
-# from app.chatbot.core.tools.sensitivetools import sensitvetool_tools, sensitive_tool_names
 from app.chatbot.core.nodes.email import email_sensitive_tools
 
 
 logger = logging.getLogger(__name__)
-
 
 def human_review_node(state: ChatBotState, config: RunnableConfig) -> Command[Literal["run_email", "email_safe_tools", "email_sensitive_tools"]]:
     last_message = state["messages"][-1]

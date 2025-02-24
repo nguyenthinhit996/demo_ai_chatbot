@@ -28,18 +28,6 @@ class GetTemplateDetailsTool(BaseTool):
         run_manager: Optional[CallbackManagerForToolRun] = None,
         config: RunnableConfig = None,
     ) -> List[Dict]:
-        # app = get_app()
-        # mock_templates = app.state.mock_template_details
-
-        # # Filter templates by id or name
-        # filtered_templates = mock_templates
-
-        # if id:
-        #     filtered_templates = [t for t in filtered_templates if t.get("id") == id]
-
-        # if title:
-        #     filtered_templates = [t for t in filtered_templates if title.lower() in t.get("title", "").lower()]
-
         if not id:
             raise ValueError("id of template cannot be empty, please provide id of template")
 
