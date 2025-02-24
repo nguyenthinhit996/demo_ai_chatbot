@@ -2,8 +2,6 @@
 from langchain_core.prompts import ChatPromptTemplate
 from datetime import date, datetime
 from app.chatbot.core.nodes.nodechatbot import CompleteOrEscalate
-from app.chatbot.core.tools.request.getrequest import GetRequestTool
-from app.chatbot.core.tools.emails.generateanwser import GenerateAnwserEmailSimple
 from app.chatbot.core.tools.templates.gettemplatedetails import GetTemplateDetailsTool
 from app.chatbot.core.tools.templates.gettemplates import GetTemplatesTool
 from app.chatbot.core.tools.request.createrequest import CreateRequestTool

@@ -53,10 +53,3 @@ async def create_request(itemsValue, residentAppUserId, formVersionId, siteId, t
         # Handle unexpected exceptions
         print(f"An error occurred: {e}")
         return None
-    # response = await graphql_request(query, variables)
-    # print(f"create_request: {response}")
-    # createSubmission = response.get("createSubmission")   
-    # if createSubmission:
-    #     id = createSubmission.get("id")  
-    #     return id
-    # return None

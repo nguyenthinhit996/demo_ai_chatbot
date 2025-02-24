@@ -32,10 +32,9 @@ class CreateRequestTool(BaseTool):
     args_schema: Type[BaseModel] = CreateRequestToolInput
     return_direct: bool = True
 
-
-    async def run222(
+    async def runWithAsynch(
         self,
-        formVersionId: str, 
+        formVersionId: str,
         itemsValue: List[ItemValue], 
         run_manager: Optional[CallbackManagerForToolRun] = None,
         config: RunnableConfig = None,
@@ -51,13 +50,8 @@ class CreateRequestTool(BaseTool):
             logging.info(f"Create Request with id: {itemsValue}")
             if not itemsValue:
                 raise ValueError("itemsValue cannot be empty")
-
             print(f"Create Request with id: {formVersionId}")
-            # json_data = json.dumps([item.model_dump() for item in itemsValue], indent=2)
-            # print(f"Create Request with json_data: {json_data}")
-
             submissionId = await create_request(formVersionId=formVersionId, itemsValue=itemsValue, residentAppUserId=residentAppUserId, siteId=siteId, token=token, origin=origin)
-
             return f"Create Request with id: {submissionId} Successfully"
 
     def _run(
@@ -67,47 +61,8 @@ class CreateRequestTool(BaseTool):
         run_manager: Optional[CallbackManagerForToolRun] = None,
         config: RunnableConfig = None,
     ) -> List[Dict]:
-            
-            # configuration = config.get("configurable", {})
-            # residentAppUserId = configuration.get("residentAppUserId", None)
-            # siteId = configuration.get("siteId", None)
-            # print(f"CreateRequestTool residentAppUserId: {residentAppUserId}")
-            # print(f"CreateRequestTool siteId: {siteId}")
-
-            # logging.info(f"Create Request with id: {itemsValue}")
-            # if not itemsValue:
-            #     raise ValueError("itemsValue cannot be empty")
-
-            # print(f"Create Request with id: {formVersionId}")
-            # # json_data = json.dumps([item.model_dump() for item in itemsValue], indent=2)
-            # # print(f"Create Request with json_data: {json_data}")
-            # submissionId = await create_request(formVersionId=formVersionId, itemsValue=itemsValue, residentAppUserId=residentAppUserId, siteId=siteId)
-
-            # return f"Create Request with id: {submissionId} Successfully"
-    
-    # async def runAsync(
-    #     self,
-    #     formVersionId: str, 
-    #     itemsValue: List[ItemValue], 
-    #     run_manager: Optional[CallbackManagerForToolRun] = None,
-    #     config: RunnableConfig = None,
-    # ) -> List[Dict]:
-            
-    #         configuration = config.get("configurable", {})
-    #         managerId = configuration.get("managerId", None)
-    #         siteId = configuration.get("siteId", None)
-    #         print(f"CreateRequestTool managerId: {managerId}")
-    #         print(f"CreateRequestTool siteId: {siteId}")
-
-    #         if not itemsValue:
-    #             raise ValueError("itemsValue cannot be empty")
-
-    #         print(f"Create Request with id: {id}")
-
-    #         submissionId = await create_request(formVersionId=formVersionId, itemsValue=itemsValue, managerId=managerId, siteId=siteId)
-
-    #         return f"Create Request with id: {submissionId} Successfully"
-              return None
+        
+        return None
 
     async def _arun(
         self,
@@ -116,7 +71,6 @@ class CreateRequestTool(BaseTool):
         run_manager: Optional[AsyncCallbackManagerForToolRun] = None,
         config: RunnableConfig = None,
     ) -> List[Dict]:
-        """Use the tool asynchronously."""
         print("Using the tool asynchronously")
-        data = await self.run222(formVersionId, itemsValue, run_manager=run_manager.get_sync(), config=config)
+        data = await self.runWithAsynch(formVersionId, itemsValue, run_manager=run_manager.get_sync(), config=config)
         return data

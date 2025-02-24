@@ -33,19 +33,6 @@ async def graphql_request(query: str, variables: dict = None, token: str = None,
         "variables": variables or {}
     }
     timeout = 20.0  # Define a timeout value in seconds
-
-    # try:
-    #     response = httpx.post(endpoint, json=payload, headers=headers)
-    #     response.raise_for_status()  # Raise exception for HTTP errors
-    #     data = response.json()
-    #     if "errors" in data:
-    #         raise Exception(f"GraphQL errors: {data['errors']}")
-    #     return data["data"]
-    # except httpx.HTTPError as http_err:
-    #     print(f"HTTP error occurred: {http_err}")
-    # except Exception as err:
-    #     print(f"Other error occurred: {err}")
-    # return None
     async with httpx.AsyncClient() as client:
         try:
             response = await client.post(endpoint, json=payload, headers=headers, timeout=timeout)

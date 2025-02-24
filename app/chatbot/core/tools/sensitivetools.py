@@ -3,8 +3,6 @@ from typing import List
 from langchain_core.tools import BaseTool
 from app.chatbot.core.tools.request.updaterequest import UpdateRequestTool
 
-
-
 class SensitveTools:
     tools: List[BaseTool]
     

@@ -4,7 +4,6 @@ from langchain_core.runnables import RunnableLambda
 from app.chatbot.core.state import ChatBotState
 from app.chatbot.core.nodes.nodechatbot import Assistant
 from langgraph.prebuilt import ToolNode
-from app.chatbot.core.nodes.nodetools import node_run_tool
 from app.chatbot.core.nodes.nodehummanreview import human_review_node
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
 from langchain_core.messages import (
@@ -17,15 +16,12 @@ from typing import (
     Union,
 )
 from pydantic import BaseModel
-from app.chatbot.core.tools.safetools import safe_tools
-from app.chatbot.core.tools.sensitivetools import sensitvetool_tools, sensitive_tool_names
-from app.chatbot.core.tools.util.summarizeconversation import summarize_conversation_tool
 from app.core import config
 from app.chatbot.core.nodes.email import create_entry_node, email_runnable, email_sensitive_tools, email_safe_tools, ToResponseEmailAssistant
 from app.chatbot.core.nodes.nodechatbot import CompleteOrEscalate
 from langchain_core.messages import ToolMessage
 from langgraph.prebuilt import tools_condition
-from app.chatbot.core.nodes.primary_assistant import assistant_runnable, primary_assistant_tools
+from app.chatbot.core.nodes.primary_assistant import assistant_runnable
 
 settings = config.Settings()
 logger = logging.getLogger(__name__)
@@ -55,16 +51,6 @@ def handle_tool_error(state) -> dict:
     error = state.get("error")
     tool_calls = state["messages"][-1].tool_calls
     logger.error(f"tool_calls {tool_calls}, error: {error}")
-
-# def route_condition(state: ChatBotState) -> Literal["human_review", "summarize_conversation", "__end__"]:
-#     logger.info(f"State snapshot: {state}")
-#     messages = state["messages"]
-#     next_node = tools_condition(state)
-#     if next_node == "human_review":
-#         return "human_review"
-#     if len(messages) > settings.length_of_messages_to_summarize:
-#         return "summarize_conversation"
-#     return "__end__"
 
 def route_email_assistant(
     state: ChatBotState,
@@ -109,13 +95,7 @@ def route_primary_assistant(
     if tool_calls:
         if tool_calls[0]["name"] == ToResponseEmailAssistant.__name__:
             return "enter_email_assistant"
-        # elif tool_calls[0]["name"] == ToBookCarRental.__name__:
-        #     return "enter_book_car_rental"
-        # elif tool_calls[0]["name"] == ToHotelBookingAssistant.__name__:
-        #     return "enter_book_hotel"
-        # elif tool_calls[0]["name"] == ToBookExcursion.__name__:
-        #     return "enter_book_excursion"
-        return "primary_assistant_tools"
+        return END
     raise ValueError("Invalid route")
 
 def user_info(state: ChatBotState):
@@ -140,37 +120,16 @@ class ChatBotGraph:
        self.graph = self.graph_builder(checkpointer)
 
     def graph_builder(self, checkpointer: AsyncPostgresSaver):
-        
-        # tool_safe_node = ToolNode(tools=safe_tools).with_fallbacks(
-        #     [RunnableLambda(handle_tool_error)], exception_key="error"
-        # )
-
-        # tool_sensitvetool_node = ToolNode(tools=sensitvetool_tools).with_fallbacks(
-        #     [RunnableLambda(handle_tool_error)], exception_key="error"
-        # )
-
         graph = StateGraph(ChatBotState)
 
-        # graph.add_node("call_llm", Assistant())
-        # graph.add_node("run_safe_tools", tool_safe_node)
-        # graph.add_node("run_sensitive_tools", tool_sensitvetool_node)
-        # graph.add_node("human_review", human_review_node)
-        # graph.add_node("summarize_conversation", summarize_conversation_tool)
+        # graph.add_node("fetch_user_info", user_info)
+        # graph.add_edge(START, "fetch_user_info")
 
-        # graph.add_edge(START, "call_llm")
-        # graph.add_edge("run_safe_tools", "call_llm")
-        # graph.add_edge("run_sensitive_tools", "call_llm")
-        # graph.add_conditional_edges(
-        #     "call_llm",
-        #     route_condition,
-        # )
+        # graph.add_conditional_edges("fetch_user_info", route_to_workflow)
 
-        graph.add_node("fetch_user_info", user_info)
-        graph.add_edge(START, "fetch_user_info")
-
-        graph.add_conditional_edges("fetch_user_info", route_to_workflow)
         # Primary assistant
         graph.add_node("primary_assistant", Assistant(assistant_runnable))
+        graph.add_edge(START, "primary_assistant")
 
         # Email assistant
         graph.add_node(
@@ -198,19 +157,14 @@ class ChatBotGraph:
 
         graph.add_node("leave_skill", pop_dialog_state)
         graph.add_edge("leave_skill", "primary_assistant")
-        graph.add_node(
-            "primary_assistant_tools", create_tool_node_with_fallback(primary_assistant_tools)
-        )
         graph.add_conditional_edges(
             "primary_assistant",
             route_primary_assistant,
             [
                 "enter_email_assistant",
-                "primary_assistant_tools",
                 END,
             ],
         )
-        graph.add_edge("primary_assistant_tools", "primary_assistant")
 
         graph_complier = graph.compile(checkpointer=checkpointer)
         return graph_complier
