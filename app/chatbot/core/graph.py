@@ -122,11 +122,6 @@ class ChatBotGraph:
     def graph_builder(self, checkpointer: AsyncPostgresSaver):
         graph = StateGraph(ChatBotState)
 
-        # graph.add_node("fetch_user_info", user_info)
-        # graph.add_edge(START, "fetch_user_info")
-
-        # graph.add_conditional_edges("fetch_user_info", route_to_workflow)
-
         # Primary assistant
         graph.add_node("primary_assistant", Assistant(assistant_runnable))
         graph.add_edge(START, "primary_assistant")
