@@ -1,11 +1,6 @@
 from langchain_core.prompts import ChatPromptTemplate
 from datetime import datetime
 from langchain_openai import ChatOpenAI
-from pydantic import BaseModel, Field
-from langchain_core.messages import ToolMessage
-from typing import Callable
-from app.chatbot.core.state import ChatBotState
-from langchain_community.tools.tavily_search import TavilySearchResults
 from app.chatbot.core.nodes.email import ToResponseEmailAssistant
 
 primary_assistant_prompt = ChatPromptTemplate.from_messages(

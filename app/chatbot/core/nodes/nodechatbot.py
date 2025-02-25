@@ -1,14 +1,9 @@
 
 from app.chatbot.core.state import ChatBotState
-from langchain_openai import ChatOpenAI
 from app.core import config
-
 from langchain_core.runnables import Runnable, RunnableConfig
-from langchain_core.prompts import ChatPromptTemplate
-from datetime import date, datetime
 from langchain_core.messages import SystemMessage
 from pydantic import BaseModel
-
 import logging
 logger = logging.getLogger(__name__)
 

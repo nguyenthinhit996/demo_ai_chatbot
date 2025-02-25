@@ -1,16 +1,11 @@
-from typing import Optional, Type, Union, List, Dict
-from datetime import date, datetime
+from typing import Optional, List, Dict
 from langchain_core.callbacks import (
     AsyncCallbackManagerForToolRun,
     CallbackManagerForToolRun,
 )
 from langchain_core.tools import BaseTool
-from pydantic import BaseModel, Field
-from app.core.app_helper import get_app
 from app.api.external_service.template import get_all_templates
 from langchain_core.runnables import RunnableConfig
-
-# class GetTemplatesToolInput(BaseModel):
 
 class GetTemplatesTool(BaseTool):
     name: str = "GetTemplatesTool"
@@ -24,11 +19,6 @@ class GetTemplatesTool(BaseTool):
         run_manager: Optional[CallbackManagerForToolRun] = None,
         config: RunnableConfig = None,
     ) -> List[Dict]:
-            # app = get_app()
-            # mock_templates = app.state.mock_templates
-            # # Filter mock data based on inputs
-            # print(f"Found {mock_templates}")
-
             configuration = config.get("configurable", {})
             token = configuration.get("token", None)
             origin = configuration.get("origin", None)

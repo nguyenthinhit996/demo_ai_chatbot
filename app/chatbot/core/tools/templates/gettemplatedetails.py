@@ -1,12 +1,10 @@
-from typing import Optional, Type, Union, List, Dict
-from datetime import date, datetime
+from typing import Optional, Type, List, Dict
 from langchain_core.callbacks import (
     AsyncCallbackManagerForToolRun,
     CallbackManagerForToolRun,
 )
 from langchain_core.tools import BaseTool
 from pydantic import BaseModel, Field
-from app.core.app_helper import get_app
 from app.api.external_service.template import get_detail_template
 from langchain_core.runnables import RunnableConfig
 

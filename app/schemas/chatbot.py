@@ -7,7 +7,6 @@ class StatusEnum(str, Enum):
     REJECT = "reject"
     FEEDBACK = "feedback"
 
-
 class UserMessage(BaseModel):
     """
     Schema message for user can asking.

@@ -11,7 +11,6 @@ class Settings(BaseSettings):
     langchain_tracing_v2: bool
     langchain_endpoint: str
     langchain_project: str
-    tavily_api_key: str
     remaining_last_message: int = 6
     length_of_messages_to_summarize: int = 10
     external_api_endpoint: str
